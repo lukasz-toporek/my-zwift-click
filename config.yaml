@@ -1,0 +1,27 @@
+# my-zwift-click configuration
+# Edit this file to customize button mapping and behavior.
+
+click:
+  # How long to scan for devices on startup (milliseconds)
+  scan_timeout_ms: 15000
+  # Keepalive interval — "RideOn" sent to keep connection alive
+  keepalive_interval_ms: 3000
+  # Delay before reconnect attempt after disconnect
+  reconnect_delay_ms: 2000
+
+# Map Zwift Click physical buttons to gear actions.
+# Available button names: PLUS, MIN, Y, A, Z, B, LEFT, RIGHT, UP, DOWN
+buttons:
+  gear_up: PLUS     # "+" button  → harder gear → key K in MyWhoosh
+  gear_down: MIN    # "−" button  → easier gear → key I in MyWhoosh
+
+mywhoosh:
+  # Keyboard key sent to MyWhoosh for each gear direction.
+  # Confirmed: I = easier (gear down), K = harder (gear up)
+  gear_up_key: k
+  gear_down_key: i
+  # Process name used to find the MyWhoosh window (for key injection)
+  process: MyWhoosh
+
+# Set to true to write raw BLE frames to zwift-click-debug-YYYY-MM-DD.log
+debug: false

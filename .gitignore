@@ -1,0 +1,5 @@
+node_modules/
+dist/
+*.log
+zwift-click-debug-*.log
+.env
