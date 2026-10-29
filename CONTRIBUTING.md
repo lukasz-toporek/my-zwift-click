@@ -5,7 +5,7 @@ Thanks for your interest in improving `my-zwift-click`!
 ## Quick start
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/my-zwift-click.git
+git clone https://github.com/lukasz-toporek/my-zwift-click.git
 cd my-zwift-click
 npm install
 npm test          # should be 9/9 green

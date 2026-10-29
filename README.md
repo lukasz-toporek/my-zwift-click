@@ -28,7 +28,7 @@ No Zadig driver swap, no native compilation, no paid subscription.
 ## Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/my-zwift-click.git
+git clone https://github.com/lukasz-toporek/my-zwift-click.git
 cd my-zwift-click
 npm install
 ```
@@ -161,7 +161,7 @@ Narzędzie łączy się z Click przez Bluetooth, dekoduje naciśnięcia przycisk
 ### Instalacja
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/my-zwift-click.git
+git clone https://github.com/lukasz-toporek/my-zwift-click.git
 cd my-zwift-click
 npm install
 ```
