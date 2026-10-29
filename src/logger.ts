@@ -15,11 +15,10 @@ let logFile: fs.WriteStream | null = null;
 
 export function setDebugMode(enabled: boolean): void {
   debugMode = enabled;
-  if (enabled) {
-    const date = new Date().toISOString().slice(0, 10);
-    logFile = fs.createWriteStream(`zwift-click-debug-${date}.log`, { flags: 'a' });
-    log.info(`Debug mode on — writing to zwift-click-debug-${date}.log`);
-  }
+}
+
+export function setLogFile(filePath: string): void {
+  logFile = fs.createWriteStream(filePath, { flags: 'a' });
 }
 
 function write(level: Level, msg: string): void {

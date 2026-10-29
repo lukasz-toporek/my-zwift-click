@@ -9,8 +9,11 @@
   "scripts": {
     "dev": "ts-node src/index.ts",
     "dev:sim": "ts-node src/index.ts --simulate",
+    "dev:tray": "ts-node src/tray.ts",
     "build": "tsc",
+    "build:exe": "npm run build && pkg dist/tray.js --targets node22-win-x64 --output dist/my-zwift-click.exe && node scripts/copy-prebuilds.js && node scripts/hide-console.js && node scripts/package-release.js",
     "start": "node dist/index.js",
+    "start:tray": "node dist/tray.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit"
@@ -19,18 +22,39 @@
     "@stoprocent/noble": "^2.5.5",
     "commander": "^12.1.0",
     "js-yaml": "^4.1.0",
-    "koffi": "^2.8.4"
+    "koffi": "^2.8.4",
+    "systray2": "^2.1.4"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.14.0",
+    "@yao-pkg/pkg": "^6.24.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },
+  "pkg": {
+    "assets": [
+      "node_modules/systray2/traybin/tray_windows_release.exe",
+      "node_modules/@stoprocent/noble/prebuilds/win32-x64/node.napi.node",
+      "node_modules/koffi/build/koffi/win32_x64/koffi.node"
+    ],
+    "scripts": [
+      "node_modules/@stoprocent/noble/lib/**/*.js",
+      "node_modules/koffi/**/*.js",
+      "node_modules/systray2/index.js"
+    ]
+  },
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["zwift", "click", "mywhoosh", "ble", "virtual-shifting", "kickr"],
+  "keywords": [
+    "zwift",
+    "click",
+    "mywhoosh",
+    "ble",
+    "virtual-shifting",
+    "kickr"
+  ],
   "license": "MIT"
 }
