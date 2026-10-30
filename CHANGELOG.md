@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.1.1 — 2026-10-30
+
+### Fixed
+
+- **System tray icon** — replaced PNG with native Windows ICO (DIB format); icon is now visible on all taskbar colors and themes
+- **First-run notifications** — app now shows a Windows toast banner on startup ("Running in system tray") and a second banner on first run ("Config file created…")
+- **First-run config** — `config.yaml` opens automatically in the default editor on first launch so users can review key bindings immediately
+- **Toast delivery** — fixed two silent failures: missing `ShowBanner` registry key (notifications were going to Action Center only) and `detached: true` losing the interactive desktop context
+
 ## v0.1.0 — 2026-10-29
 
 First public release.
@@ -23,4 +32,4 @@ First public release.
 
 ### Known issues
 
-- System tray icon may render as a small colored square on some Windows builds (cosmetic only)
+- ~~System tray icon may render as a small colored square~~ — fixed in v0.1.1

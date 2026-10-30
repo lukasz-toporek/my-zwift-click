@@ -11,7 +11,7 @@ import { ClickScanner } from './ble/scanner';
 import { Shifter } from './gear/shifter';
 import type { ButtonState } from './ble/protocol/parser';
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 const isPkg = !!(process as NodeJS.Process & { pkg?: unknown }).pkg;
 
 // In pkg bundles, the exe directory is where side-car files (prebuilds/, traybin/) live.

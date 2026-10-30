@@ -1,5 +1,5 @@
-/**
- * Creates dist/my-zwift-click-v0.1.0-windows-x64.zip containing:
+﻿/**
+ * Creates dist/my-zwift-click-v0.1.1-windows-x64.zip containing:
  *   my-zwift-click.exe
  *   prebuilds/win32-x64/node.napi.node
  *   traybin/tray_windows_release.exe
@@ -39,3 +39,4 @@ execSync(cmd, { stdio: 'inherit' });
 
 const size = (fs.statSync(zipPath).size / 1024 / 1024).toFixed(1);
 console.log(`Created ${zipName} (${size} MB)`);
+

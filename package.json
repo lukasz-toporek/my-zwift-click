@@ -1,6 +1,6 @@
 {
   "name": "my-zwift-click",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Use Zwift Click gear shifters with MyWhoosh and any smart trainer — free, open-source",
   "main": "dist/index.js",
   "bin": {
