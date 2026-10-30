@@ -2,7 +2,7 @@
 import './pkg-native-setup'; // MUST be first — patches Module._load before any native addon loads
 import * as path from 'path';
 import * as fs from 'fs';
-import { spawn } from 'child_process';
+import { spawn, spawnSync } from 'child_process';
 import SysTray from 'systray2';
 import { loadConfig } from './config/loader';
 import { setDebugMode, setLogFile, log } from './logger';
@@ -63,7 +63,6 @@ function registerAumid(): void {
   // Unpackaged Win32 apps must register an AUMID in HKCU before WinRT toasts work.
   const regPath = `HKCU:\\Software\\Classes\\AppUserModelId\\${TOAST_AUMID}`;
   const ps = `if(-not(Test-Path '${regPath}')){New-Item -Path '${regPath}' -Force|Out-Null;New-ItemProperty -Path '${regPath}' -Name DisplayName -Value '${TOAST_AUMID}' -PropertyType String -Force|Out-Null}`;
-  const { spawnSync } = require('child_process') as typeof import('child_process');
   spawnSync('powershell.exe', ['-WindowStyle', 'Hidden', '-NonInteractive', '-Command', ps], { timeout: 3000 });
 }
 
