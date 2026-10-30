@@ -58,18 +58,18 @@ const IDX_STATUS = 0;
 const IDX_EXIT = 2;
 
 function showBalloon(title: string, text: string): void {
+  const esc = (s: string) => s.replace(/[<>&'"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[c]!));
+  const xml = `<toast><visual><binding template="ToastGeneric"><text>${esc(title)}</text><text>${esc(text)}</text></binding></visual></toast>`;
+  // Use PowerShell's own AUMID so unpackaged Win32 apps can send WinRT toast notifications.
+  const aumid = '{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\\WindowsPowerShell\\v1.0\\powershell.exe';
   const ps = [
-    'Add-Type -AssemblyName System.Windows.Forms;',
-    '$n = New-Object System.Windows.Forms.NotifyIcon;',
-    '$n.Icon = [System.Drawing.SystemIcons]::Application;',
-    '$n.Visible = $true;',
-    `$n.BalloonTipTitle = '${title}';`,
-    `$n.BalloonTipText = '${text}';`,
-    '$n.ShowBalloonTip(4000);',
-    'Start-Sleep -Milliseconds 5000;',
-    '$n.Dispose()',
-  ].join(' ');
-  spawn('powershell.exe', ['-WindowStyle', 'Hidden', '-Command', ps], {
+    '[Windows.UI.Notifications.ToastNotificationManager,Windows.UI.Notifications,ContentType=WindowsRuntime]|Out-Null;',
+    '[Windows.Data.Xml.Dom.XmlDocument,Windows.Data.Xml.Dom.XmlDocument,ContentType=WindowsRuntime]|Out-Null;',
+    `$x=New-Object Windows.Data.Xml.Dom.XmlDocument;$x.LoadXml('${xml}');`,
+    `$t=New-Object Windows.UI.Notifications.ToastNotification($x);`,
+    `[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('${aumid}').Show($t)`,
+  ].join('');
+  spawn('powershell.exe', ['-WindowStyle', 'Hidden', '-NonInteractive', '-Command', ps], {
     detached: true, stdio: 'ignore',
   }).unref();
 }
