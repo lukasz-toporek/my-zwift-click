@@ -61,11 +61,13 @@ const IDX_EXIT = 2;
 const TOAST_AUMID = 'my-zwift-click';
 
 function registerAumid(): void {
-  // Unpackaged Win32 apps must register an AUMID in HKCU before WinRT toasts work.
-  spawnSync('reg', [
-    'add', `HKCU\\Software\\Classes\\AppUserModelId\\${TOAST_AUMID}`,
-    '/v', 'DisplayName', '/t', 'REG_SZ', '/d', TOAST_AUMID, '/f',
-  ], { timeout: 3000 });
+  // Register AUMID and enable banner display for WinRT toasts from unpackaged Win32 apps.
+  const aumidKey = `HKCU\\Software\\Classes\\AppUserModelId\\${TOAST_AUMID}`;
+  const notifKey = `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings\\${TOAST_AUMID}`;
+  spawnSync('reg', ['add', aumidKey, '/v', 'DisplayName', '/t', 'REG_SZ', '/d', TOAST_AUMID, '/f'], { timeout: 3000 });
+  spawnSync('reg', ['add', notifKey, '/v', 'Enabled', '/t', 'REG_DWORD', '/d', '1', '/f'], { timeout: 3000 });
+  spawnSync('reg', ['add', notifKey, '/v', 'ShowBanner', '/t', 'REG_DWORD', '/d', '1', '/f'], { timeout: 3000 });
+  spawnSync('reg', ['add', notifKey, '/v', 'ShowInActionCenter', '/t', 'REG_DWORD', '/d', '1', '/f'], { timeout: 3000 });
 }
 
 function showBalloon(title: string, text: string): void {
@@ -82,9 +84,11 @@ function showBalloon(title: string, text: string): void {
   ].join('\r\n');
   const tmpFile = path.join(os.tmpdir(), `mzc-${Date.now()}.ps1`);
   fs.writeFileSync(tmpFile, script, 'utf8');
-  spawn('powershell.exe', ['-WindowStyle', 'Hidden', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', tmpFile], {
-    detached: true, stdio: 'ignore',
-  }).unref();
+  const proc = spawn('powershell.exe', ['-WindowStyle', 'Hidden', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', tmpFile], {
+    stdio: 'ignore',
+    windowsHide: true,
+  });
+  proc.unref();
   setTimeout(() => { try { fs.unlinkSync(tmpFile); } catch { /* ignore */ } }, 15000);
 }
 
