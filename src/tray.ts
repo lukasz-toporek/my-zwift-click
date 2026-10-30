@@ -3,6 +3,7 @@ import './pkg-native-setup'; // MUST be first — patches Module._load before an
 import * as path from 'path';
 import * as fs from 'fs';
 import { spawn, spawnSync } from 'child_process';
+import * as os from 'os';
 import SysTray from 'systray2';
 import { loadConfig } from './config/loader';
 import { setDebugMode, setLogFile, log } from './logger';
@@ -61,24 +62,30 @@ const TOAST_AUMID = 'my-zwift-click';
 
 function registerAumid(): void {
   // Unpackaged Win32 apps must register an AUMID in HKCU before WinRT toasts work.
-  const regPath = `HKCU:\\Software\\Classes\\AppUserModelId\\${TOAST_AUMID}`;
-  const ps = `if(-not(Test-Path '${regPath}')){New-Item -Path '${regPath}' -Force|Out-Null;New-ItemProperty -Path '${regPath}' -Name DisplayName -Value '${TOAST_AUMID}' -PropertyType String -Force|Out-Null}`;
-  spawnSync('powershell.exe', ['-WindowStyle', 'Hidden', '-NonInteractive', '-Command', ps], { timeout: 3000 });
+  spawnSync('reg', [
+    'add', `HKCU\\Software\\Classes\\AppUserModelId\\${TOAST_AUMID}`,
+    '/v', 'DisplayName', '/t', 'REG_SZ', '/d', TOAST_AUMID, '/f',
+  ], { timeout: 3000 });
 }
 
 function showBalloon(title: string, text: string): void {
   const esc = (s: string) => s.replace(/[<>&'"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[c]!));
   const xml = `<toast><visual><binding template="ToastGeneric"><text>${esc(title)}</text><text>${esc(text)}</text></binding></visual></toast>`;
-  const ps = [
-    '[Windows.UI.Notifications.ToastNotificationManager,Windows.UI.Notifications,ContentType=WindowsRuntime]|Out-Null;',
-    '[Windows.Data.Xml.Dom.XmlDocument,Windows.Data.Xml.Dom.XmlDocument,ContentType=WindowsRuntime]|Out-Null;',
-    `$x=New-Object Windows.Data.Xml.Dom.XmlDocument;$x.LoadXml('${xml}');`,
-    `$t=New-Object Windows.UI.Notifications.ToastNotification($x);`,
+  // Write to a .ps1 file to avoid command-line quoting issues with XML double quotes.
+  const script = [
+    `[Windows.UI.Notifications.ToastNotificationManager,Windows.UI.Notifications,ContentType=WindowsRuntime]|Out-Null`,
+    `[Windows.Data.Xml.Dom.XmlDocument,Windows.Data.Xml.Dom.XmlDocument,ContentType=WindowsRuntime]|Out-Null`,
+    `$x=New-Object Windows.Data.Xml.Dom.XmlDocument`,
+    `$x.LoadXml('${xml}')`,
+    `$t=New-Object Windows.UI.Notifications.ToastNotification($x)`,
     `[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('${TOAST_AUMID}').Show($t)`,
-  ].join('');
-  spawn('powershell.exe', ['-WindowStyle', 'Hidden', '-NonInteractive', '-Command', ps], {
+  ].join('\r\n');
+  const tmpFile = path.join(os.tmpdir(), `mzc-${Date.now()}.ps1`);
+  fs.writeFileSync(tmpFile, script, 'utf8');
+  spawn('powershell.exe', ['-WindowStyle', 'Hidden', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', tmpFile], {
     detached: true, stdio: 'ignore',
   }).unref();
+  setTimeout(() => { try { fs.unlinkSync(tmpFile); } catch { /* ignore */ } }, 15000);
 }
 
 let connectedCount = 0;
