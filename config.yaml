@@ -22,6 +22,19 @@ mywhoosh:
   gear_down_key: i
   # Process name used to find the MyWhoosh window (for key injection)
   process: MyWhoosh
+  # Map additional Zwift Click buttons directly to keyboard keys.
+  # Supported key names: letters (a-z), digits (0-9),
+  #   up, down, left, right, enter, escape, space, tab, backspace
+  # Remove any entry to disable that button's mapping.
+  button_map:
+    LEFT: left
+    UP: up
+    RIGHT: right
+    DOWN: down
+    A: enter
+    B: space     # power-up
+    Y: tab       # zmiana kamery
+    Z: escape    # menu / pauza
 
 # Set to true to write raw BLE frames to zwift-click-debug-YYYY-MM-DD.log
 debug: false

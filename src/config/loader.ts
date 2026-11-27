@@ -18,6 +18,16 @@ const DEFAULTS: AppConfig = {
     gear_up_key: 'k',
     gear_down_key: 'i',
     process: 'MyWhoosh',
+    button_map: {
+      LEFT: 'left',
+      UP: 'up',
+      RIGHT: 'right',
+      DOWN: 'down',
+      A: 'enter',
+      B: 'space',
+      Y: 'tab',
+      Z: 'escape',
+    },
   },
   debug: false,
 };
@@ -33,7 +43,14 @@ export function loadConfig(configPath: string): AppConfig {
   const config: AppConfig = {
     click: { ...DEFAULTS.click, ...(parsed.click ?? {}) },
     buttons: { ...DEFAULTS.buttons, ...(parsed.buttons ?? {}) },
-    mywhoosh: { ...DEFAULTS.mywhoosh, ...(parsed.mywhoosh ?? {}) },
+    mywhoosh: {
+      ...DEFAULTS.mywhoosh,
+      ...(parsed.mywhoosh ?? {}),
+      button_map: {
+        ...DEFAULTS.mywhoosh.button_map,
+        ...(parsed.mywhoosh?.button_map ?? {}),
+      },
+    },
     debug: parsed.debug ?? DEFAULTS.debug,
   };
 
@@ -58,6 +75,18 @@ function validateConfig(config: AppConfig, filePath: string): void {
     const val = config.mywhoosh[field];
     if (!val || val.length === 0) {
       throw new Error(`mywhoosh.${field} must not be empty`);
+    }
+  }
+
+  for (const [btn, key] of Object.entries(config.mywhoosh.button_map)) {
+    if (!knownButtons.includes(btn)) {
+      throw new Error(
+        `Invalid button name "${btn}" in ${path.basename(filePath)} mywhoosh.button_map.\n` +
+        `Valid names: ${knownButtons.join(', ')}`,
+      );
+    }
+    if (!key || key.length === 0) {
+      throw new Error(`mywhoosh.button_map.${btn} must not be empty`);
     }
   }
 }

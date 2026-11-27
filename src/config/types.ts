@@ -15,6 +15,7 @@ export interface MyWhooshConfig {
   gear_up_key: string;
   gear_down_key: string;
   process: string;
+  button_map: Record<string, string>;
 }
 
 export interface AppConfig {
