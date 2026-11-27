@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-release:
     runs-on: windows-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -33,5 +35,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ steps.version.outputs.VERSION }}
-          files: my-zwift-click-${{ steps.version.outputs.VERSION }}-windows-x64.zip
+          files: dist/my-zwift-click-${{ steps.version.outputs.VERSION }}-windows-x64.zip
           generate_release_notes: true
