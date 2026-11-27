@@ -23,6 +23,10 @@ const copies = [
     src: path.join(root, 'node_modules', 'systray2', 'traybin', 'tray_windows_release.exe'),
     dest: path.join(distDir, 'traybin', 'tray_windows_release.exe'),
   },
+  {
+    src: path.join(root, 'config.yaml'),
+    dest: path.join(distDir, 'config.yaml'),
+  },
 ];
 
 for (const { src, dest } of copies) {
